@@ -60,8 +60,9 @@ class Metro < Thor
 
   
   desc 'matrix METHOD', 'calculates a distance matrix the specified method'
-  method_options chance: :string
-  method_options output: :string
+  option :chance, type: :string, desc: 'chance from 0 to 1 to select a random station to consider'
+  option :output, type: :string, desc: 'file name of the file to export'
+  option :format, type: :string, default: :tabs, desc: 'format in which the file will be saved'
   def matrix(method='processes')
     puts options.inspect
     chance = options[:chance].to_f
@@ -69,7 +70,6 @@ class Metro < Thor
     when 'processes'
       calculate_matrix_parallel_processes(chance)
     when 'threads'
-
       calculate_matrix_parallel_threads(chance)
     when 'inline'
       calculate_matrix(chance)
@@ -80,11 +80,17 @@ class Metro < Thor
 
     if options[:output]
       File.open(options[:output], 'w') do |file|
-        mtx.each do |route, result|
-          file.print route.split('->').join('|')
-          file.print "|#{result.cost}|"
 
-          file.puts  "#{result.stations.map(&:id).join(',')}"
+        mtx.each do |route, result|
+          case options[:format]
+          when :tabs
+            file.print route.split('->').join('|')
+            file.print "|#{result.cost}|"
+
+            file.puts  "#{result.stations.map(&:id).join(',')}"
+          when :json
+            # file.puts { route:, cost: result.cost, stations: result.stations.map(&:id).join(',') }.to_json
+          end
         end
       end
     end
