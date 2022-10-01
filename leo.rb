@@ -121,7 +121,7 @@ class Planner
   end
 end
 random = Random.new(100)
-CROPPED_STATIONS = STATIONS.keys.select { |k|  random.rand > 0.96 }
+CROPPED_STATIONS = STATIONS.keys#.select { |k|  random.rand > 0.96 }
 CROP_STATION_ZIP = []
 CROPPED_STATIONS.each { |o| CROPPED_STATIONS.each { |d| CROP_STATION_ZIP << [o, d] } }
 puts "#{CROP_STATION_ZIP.length} stations tuples loaded for test"
@@ -166,13 +166,7 @@ def calculate_matrices
     # benchmark.report('threads') { res << calculate_matrix_parallel_threads }
     benchmark.report('inline') { res << calculate_matrix }
   end
-  ARGF.readline 
-  res.each do |matrix|
-    matrix.each do |route, result|
-      puts "#{route}: #{result.stations.reverse.map(&:id).join(',')}"
-    end
-    ARGF.readline    
-  end
+  res
 end
 
 def calculate_route(station_names:)
@@ -196,15 +190,23 @@ rescue StandardError => e
   retry
 end
 
-loop do
-  puts 'Elige actividad a realizar (ruta/matriz)'
-  option = ARGF.readline.strip
-  next calculate_route(station_names:)   if option == 'ruta'
-  next calculate_matrices if option == 'matriz'
+# loop do
+#   puts 'Elige actividad a realizar (ruta/matriz)'
+#   option = ARGF.readline.strip
+#   next calculate_route(station_names:)   if option == 'ruta'
+#   next calculate_matrices if option == 'matriz'
   
 
-  puts 'Continuar (si/no)'
-  break if ARGF.readline.strip == 'no'
-end
+#   puts 'Continuar (si/no)'
+#   break if ARGF.readline.strip == 'no'
+# end
 # ARGF.readline
-# calculate_matrices
+calculate_matrices
+
+# ARGF.readline 
+# res.each do |matrix|
+#   matrix.each do |route, result|
+#     puts "#{route}: #{result.stations.reverse.map(&:id).join(',')}"
+#   end
+#   ARGF.readline    
+# end
