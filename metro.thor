@@ -81,7 +81,10 @@ class Metro < Thor
     if options[:output]
       File.open(options[:output], 'w') do |file|
         mtx.each do |route, result|
-          file.puts  "#{route}: #{result.cost}\t #{result.stations.map(&:id).join(',')}"
+          file.print route.split('->').join('|')
+          file.print "|#{result.cost}|"
+
+          file.puts  "#{result.stations.map(&:id).join(',')}"
         end
       end
     end
