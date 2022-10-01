@@ -129,7 +129,7 @@ puts "#{CROP_STATION_ZIP.length} stations tuples loaded for test"
 def calculate_matrix_parallel_threads
   tuples = CROP_STATION_ZIP
 
-  Parallel.map(tuples, in_threads: 10) do |from, to|
+  Parallel.map(tuples, in_threads: 12) do |from, to|
     # puts "#{from} -> #{to}"
     ["#{from}->#{to}", Planner.new.travel(from:, to:)]
   end.to_h
@@ -138,7 +138,7 @@ end
 def calculate_matrix_parallel_processes
   tuples = CROP_STATION_ZIP
 
-  Parallel.map(tuples, in_processes: 4) do |from, to|
+  Parallel.map(tuples, in_processes: 12) do |from, to|
     # puts "#{from} -> #{to}"
     ["#{from}->#{to}", Planner.new.travel(from:, to:)]
   end.to_h
@@ -163,7 +163,7 @@ def calculate_matrices
   res = []
   Benchmark.bm do |benchmark|
     benchmark.report('processes') { res << calculate_matrix_parallel_processes }
-    # benchmark.report('threads') { res << calculate_matrix_parallel_threads }
+    benchmark.report('threads') { res << calculate_matrix_parallel_threads }
     benchmark.report('inline') { res << calculate_matrix }
   end
   res
