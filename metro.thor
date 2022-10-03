@@ -139,14 +139,14 @@ class Metro < Thor
     crop_station_zip
   end
 
-  def calculate_matrix_parallel_threads(chance)
+  def calculate_matrix_parallel_threads(chance = 1)
     tuples = prepare(filter: chance)
     Parallel.map(tuples, in_threads: 12) do |from, to|
       ["#{from}->#{to}", Planner.get.travel(from:, to:)]
     end.to_h
   end
   
-  def calculate_matrix_parallel_processes(chance)
+  def calculate_matrix_parallel_processes(chance = 1)
     tuples = prepare(filter: chance)
     Parallel.map(tuples, in_processes: 12) do |from, to|
       # puts "#{from} -> #{to}"
@@ -154,7 +154,7 @@ class Metro < Thor
     end.to_h
   end
   
-  def calculate_matrix(chance)
+  def calculate_matrix(chance = 1)
     distance_matrix = {}
     prepare(filter: chance).each do |from, to|
       result = Planner.get.travel(from:, to:)
